@@ -107,7 +107,7 @@ export default function Navbar() {
       <div className="mobile-nav">
         <StaggeredMenu
           isFixed={true}
-          position="right"
+          position="left"
           items={staggeredItems}
           socialItems={socialItems}
           displaySocials={socialItems.length > 0}
@@ -128,7 +128,8 @@ export default function Navbar() {
             color: 'var(--color-text)',
             position: 'fixed',
             top: '2em',
-            left: '2em',
+            right: '2em',
+            textAlign: 'right',
             zIndex: 41 // Above staggered menu header which is 20
           }}>
             {facultyData.name}
