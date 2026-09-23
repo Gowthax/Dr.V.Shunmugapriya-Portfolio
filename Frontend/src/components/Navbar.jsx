@@ -105,6 +105,39 @@ export default function Navbar() {
 
       {/* Mobile Navigation (StaggeredMenu) */}
       <div className="mobile-nav">
+        {/* Fixed top bar with proper flex alignment */}
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 'var(--nav-height)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 1.25rem',
+          zIndex: 200,
+          backgroundColor: scrolled ? 'rgba(247, 243, 236, 0.92)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(10px)' : 'none',
+          transition: 'background-color 0.4s ease',
+          pointerEvents: 'none'
+        }}>
+          {/* Left: Menu toggle — rendered by StaggeredMenu but we need its button here */}
+          <div id="mobile-menu-trigger" style={{ pointerEvents: 'auto' }} />
+          {/* Right: Name */}
+          <Link to="/" style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            color: 'var(--color-text)',
+            pointerEvents: 'auto',
+            lineHeight: 1
+          }}>
+            {facultyData.name}
+          </Link>
+        </div>
+
         <StaggeredMenu
           isFixed={true}
           position="left"
@@ -112,39 +145,61 @@ export default function Navbar() {
           socialItems={socialItems}
           displaySocials={socialItems.length > 0}
           displayItemNumbering={true}
-          menuButtonColor="var(--color-text)"
-          openMenuButtonColor="var(--color-text)"
-          changeMenuColorOnOpen={true}
-          colors={['var(--color-warm-ivory)', 'var(--color-soft-taupe)']}
-          logoUrl="" // Will be hidden or replaced
+          menuButtonColor="var(--color-charcoal-brown)"
+          openMenuButtonColor="var(--color-charcoal-brown)"
+          changeMenuColorOnOpen={false}
+          colors={['var(--color-warm-sand)', 'var(--color-soft-taupe)']}
+          logoUrl=""
           accentColor="var(--color-primary)"
         />
-        {/* We overlay our own logo on mobile to match style since StaggeredMenu expects an image URL but we just use text */}
-        <Link to="/" className="mobile-nav-logo" style={{ 
-            fontFamily: 'var(--font-serif)', 
-            fontSize: '1.25rem', 
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            color: 'var(--color-text)',
-            position: 'fixed',
-            top: '2em',
-            right: '2em',
-            textAlign: 'right',
-            zIndex: 41 // Above staggered menu header which is 20
-          }}>
-            {facultyData.name}
-        </Link>
       </div>
 
       <style>{`
-        /* StaggeredMenu resets for this project */
+        /* Hide StaggeredMenu's own header logo since we handle logo ourselves */
         .mobile-nav .sm-logo { display: none !important; }
-        .mobile-nav .staggered-menu-panel { background: var(--color-warm-ivory) !important; color: var(--color-text) !important; }
-        .mobile-nav .sm-panel-item { color: var(--color-text) !important; font-family: var(--font-serif); text-transform: uppercase; }
+
+        /* Reposition StaggeredMenu's header to match our fixed nav bar height */
+        .mobile-nav .staggered-menu-header {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          height: var(--nav-height) !important;
+          padding: 0 1.25rem !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: flex-start !important;
+          z-index: 201 !important;
+          pointer-events: none !important;
+          background: transparent !important;
+        }
+        .mobile-nav .staggered-menu-header > * {
+          pointer-events: auto !important;
+        }
+
+        /* Toggle button styling */
+        .mobile-nav .sm-toggle {
+          font-family: var(--font-sans) !important;
+          font-size: 0.875rem !important;
+          letter-spacing: 0.05em !important;
+          text-transform: uppercase !important;
+          color: var(--color-charcoal-brown) !important;
+          padding: 0 !important;
+        }
+
+        /* Panel styles */
+        .mobile-nav .staggered-menu-panel {
+          background: var(--color-warm-ivory) !important;
+          color: var(--color-text) !important;
+          padding-top: calc(var(--nav-height) + 2rem) !important;
+        }
+        .mobile-nav .sm-panel-item {
+          color: var(--color-charcoal-brown) !important;
+          font-family: var(--font-serif) !important;
+        }
         .mobile-nav .sm-panel-item:hover { color: var(--color-primary) !important; }
-        .mobile-nav .sm-panel-title { color: var(--color-text) !important; }
         .mobile-nav .sm-socials-title { color: var(--color-primary) !important; }
-        
+
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .mobile-nav { display: block !important; }
