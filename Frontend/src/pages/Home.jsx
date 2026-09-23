@@ -309,9 +309,11 @@ export default function Home() {
         @media (max-width: 768px) {
           section > div {
             grid-template-columns: 1fr !important;
+            gap: 2rem !important;
           }
           h1 {
-            font-size: 3rem !important;
+            font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+            margin-bottom: 1rem !important;
           }
           .hero-side-label {
             display: none !important;
@@ -319,9 +321,11 @@ export default function Home() {
           .research-pathway {
             flex-direction: column;
             align-items: flex-start !important;
+            gap: 1rem !important;
           }
-          .research-pathway span:last-child {
+          .research-pathway > div > span:nth-child(2) {
             transform: rotate(90deg);
+            display: inline-block;
           }
         }
       `}</style>

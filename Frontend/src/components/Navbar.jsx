@@ -95,9 +95,18 @@ export default function Navbar() {
         <button 
           className="mobile-toggle"
           onClick={() => setMobileMenuOpen(true)}
-          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }}
+          style={{ 
+            display: 'none', 
+            background: 'var(--color-charcoal-brown)', 
+            border: 'none', 
+            cursor: 'pointer',
+            padding: '0.75rem',
+            borderRadius: '50%',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          <Menu size={24} color="var(--color-text)" />
+          <Menu size={24} color="var(--color-warm-ivory)" />
         </button>
       </nav>
 
@@ -148,7 +157,7 @@ export default function Navbar() {
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
-          .mobile-toggle { display: block !important; }
+          .mobile-toggle { display: flex !important; }
         }
       `}</style>
     </>
