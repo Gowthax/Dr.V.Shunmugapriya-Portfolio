@@ -1,12 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { facultyData } from '../data/facultyData';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import StaggeredMenu from './StaggeredMenu';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -18,10 +17,26 @@ export default function Navbar() {
   }, []);
 
   const navLinks = facultyData.navigation || [];
+  
+  // Format items for StaggeredMenu
+  const staggeredItems = [
+    { label: 'HOME', ariaLabel: 'Go to home page', link: '/' },
+    ...navLinks.map(link => ({
+      label: link.name,
+      ariaLabel: `Go to ${link.name}`,
+      link: link.path
+    }))
+  ];
+  
+  const socialItems = facultyData.socialLinks?.map(social => ({
+    label: social.platform,
+    link: social.url
+  })) || [];
 
   return (
     <>
-      <nav style={{
+      {/* Desktop Navigation */}
+      <nav className="desktop-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         height: 'var(--nav-height)',
         display: 'flex', alignItems: 'center',
@@ -36,13 +51,14 @@ export default function Navbar() {
             fontFamily: 'var(--font-serif)', 
             fontSize: '1.5rem', 
             textTransform: 'uppercase',
-            letterSpacing: '0.05em'
+            letterSpacing: '0.05em',
+            color: 'var(--color-text)'
           }}>
             {facultyData.name}
           </Link>
         </div>
         
-        <div style={{ display: 'flex', gap: '3rem' }} className="desktop-nav">
+        <div style={{ display: 'flex', gap: '3rem' }}>
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
@@ -60,7 +76,8 @@ export default function Navbar() {
                   textTransform: 'uppercase',
                   opacity: isActive ? 1 : 0.6,
                   fontWeight: isActive ? 600 : 400,
-                  transition: 'opacity 0.3s ease'
+                  transition: 'opacity 0.3s ease',
+                  color: 'var(--color-text)'
                 }}
               >
                 <span style={{ color: isActive ? 'var(--color-primary)' : 'inherit' }}>{link.num}</span>
@@ -83,81 +100,56 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <a href="#contact" style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: '0.875rem',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            opacity: 0.6
-          }}>CONTACT</a>
         </div>
-
-        <button 
-          className="mobile-toggle"
-          onClick={() => setMobileMenuOpen(true)}
-          style={{ 
-            display: 'none', 
-            background: 'var(--color-charcoal-brown)', 
-            border: 'none', 
-            cursor: 'pointer',
-            padding: '0.75rem',
-            borderRadius: '50%',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Menu size={24} color="var(--color-warm-ivory)" />
-        </button>
       </nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: '-100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '-100%' }}
-            transition={{ type: 'tween', duration: 0.4 }}
-            style={{
-              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-              backgroundColor: 'var(--color-bg)',
-              zIndex: 101,
-              display: 'flex', flexDirection: 'column',
-              padding: '2rem 5%'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button 
-                onClick={() => setMobileMenuOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                <X size={32} color="var(--color-text)" />
-              </button>
-            </div>
-            
-            <div style={{
-              flex: 1, display: 'flex', flexDirection: 'column',
-              justifyContent: 'center', alignItems: 'center', gap: '2rem'
-            }}>
-              <Link to="/" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '2rem', fontFamily: 'var(--font-serif)' }}>HOME</Link>
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.name} 
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{ fontSize: '2rem', fontFamily: 'var(--font-serif)' }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mobile Navigation (StaggeredMenu) */}
+      <div className="mobile-nav">
+        <StaggeredMenu
+          isFixed={true}
+          position="right"
+          items={staggeredItems}
+          socialItems={socialItems}
+          displaySocials={socialItems.length > 0}
+          displayItemNumbering={true}
+          menuButtonColor="var(--color-text)"
+          openMenuButtonColor="var(--color-text)"
+          changeMenuColorOnOpen={true}
+          colors={['var(--color-warm-ivory)', 'var(--color-soft-taupe)']}
+          logoUrl="" // Will be hidden or replaced
+          accentColor="var(--color-primary)"
+        />
+        {/* We overlay our own logo on mobile to match style since StaggeredMenu expects an image URL but we just use text */}
+        <Link to="/" className="mobile-nav-logo" style={{ 
+            fontFamily: 'var(--font-serif)', 
+            fontSize: '1.25rem', 
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            color: 'var(--color-text)',
+            position: 'fixed',
+            top: '2em',
+            left: '2em',
+            zIndex: 41 // Above staggered menu header which is 20
+          }}>
+            {facultyData.name}
+        </Link>
+      </div>
+
       <style>{`
+        /* StaggeredMenu resets for this project */
+        .mobile-nav .sm-logo { display: none !important; }
+        .mobile-nav .staggered-menu-panel { background: var(--color-warm-ivory) !important; color: var(--color-text) !important; }
+        .mobile-nav .sm-panel-item { color: var(--color-text) !important; font-family: var(--font-serif); text-transform: uppercase; }
+        .mobile-nav .sm-panel-item:hover { color: var(--color-primary) !important; }
+        .mobile-nav .sm-panel-title { color: var(--color-text) !important; }
+        .mobile-nav .sm-socials-title { color: var(--color-primary) !important; }
+        
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
-          .mobile-toggle { display: flex !important; }
+          .mobile-nav { display: block !important; }
+        }
+        @media (min-width: 769px) {
+          .mobile-nav { display: none !important; }
         }
       `}</style>
     </>
